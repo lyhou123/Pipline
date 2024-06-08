@@ -12,12 +12,12 @@ pipeline {
         }
         stage('Build images') {
             steps {
-                sh 'docker build -t shinchan/react:1.2 -f react-dockerfile .'
+                sh 'docker build -t lyhou123/react:1.2 -f react-dockerfile .'
             }
         }
         stage('deploy') {
             steps {
-                sh 'docker run -d -p 8088:80 --name react-test shinchan/react:1.2'
+                sh 'docker run -d -p 8088:80 --name react-test lyhou123/react:1.2'
             }
         }
         stage('curl ip public') {
