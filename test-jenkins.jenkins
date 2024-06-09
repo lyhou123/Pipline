@@ -2,12 +2,52 @@ pipeline {
     agent any
 
     stages {
-        stage('Git clone') {
+        stage('Clone Repository') {
             steps {
                 echo "git clone from github"
-                git branch: 'main', credentialsId: 'github-id', url: 'https://github.com/lyhou123/DevOps.git'
-                sh 'ls -lrt'
-                sh 'pwd'
+                git branch: 'master', url: 'https://github.com/MuyleangIng/nextjs_docker.git'
+                sh """
+                ls -lrt
+                pwd
+                """
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t lyhou123/nextjsjenkins .'
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                sh 'docker login -u lyhou123 -p !LoveMyPiano'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push lyhou123/nextjsjenkins'
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                sh 'docker run -d -p 3000:3000 --name nextjsjenkins lyhou123/nextjsjenkins'
+            }
+        }
+
+        stage('Logout from Docker Hub') {
+            steps {
+                sh 'docker logout'
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Clean up the workspace
+                cleanWs()
             }
         }
     }
